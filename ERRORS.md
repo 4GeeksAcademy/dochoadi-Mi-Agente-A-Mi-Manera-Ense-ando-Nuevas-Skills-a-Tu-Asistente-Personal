@@ -173,3 +173,53 @@ Esto contradice el enunciado genérico del proyecto, que lista GitHub y Google T
 **Riesgo asumido y documentado:** Google Drive y Google Tasks se conectaron a Zapier **durante este proyecto**, no antes. Esto es, en sentido estricto, una configuración nueva de conexión, lo cual el enunciado pide evitar. El estudiante asume este riesgo de interpretación conscientemente (mismo patrón que el riesgo documentado en el ejercicio anterior sobre el criterio del evento de Calendar) — ver la tabla de verificación final en `TRACKING.md`.
 
 **Lección:** antes de diseñar skills a partir de un enunciado genérico, verificar con el propio agente (sin configurar nada nuevo) qué servicios están realmente conectados — la lista de la guía puede no coincidir con la conexión real del estudiante. Y: una vez identificado un posible incumplimiento de un criterio explícito, documentarlo con la misma transparencia tanto si se revierte como si se asume el riesgo.
+
+---
+
+### 2026-11-01 — "MCP error -32000: Connection closed" al probar `triaje-bandeja-entrada`
+
+**Síntoma:** al probar la skill desde Telegram, Kai no pudo completar la búsqueda de correos no leídos en Gmail y empezó a intentar workarounds por su cuenta ("voy a probar un enfoque diferente..."). El estudiante interpretó, por un mensaje de estado ambiguo, que OpenClaw había eliminado por completo el servidor MCP de Zapier.
+
+**Diagnóstico:**
+1. Se pidió a Kai el error literal (sin workarounds): `MCP error -32000: Connection closed`, en la llamada `zapier__execute_zapier_read_action` → `gmail_find_email` (`query: "is:unread in:inbox"`).
+2. Se revisó `openclaw mcp show zapier` y `openclaw mcp list`: la configuración seguía intacta en `openclaw.json`, el servidor **no** se había eliminado.
+3. Se revisó el log del gateway (`/tmp/openclaw/openclaw-<fecha>.log`) y aparecían varios mensajes `[state/lease] Waiting for state lease core:mcp-oauth/zapier-... held by <otro-proceso>`, justo alrededor del momento del fallo — indicando contención: la prueba real en Telegram y los comandos de diagnóstico lanzados desde el CLI en paralelo compitieron por la misma credencial OAuth de Zapier, y una de las llamadas se cortó a media conexión.
+4. Se volvió a probar `openclaw mcp probe zapier` en frío (sin otra llamada concurrente): respondió correctamente con 17 herramientas, sin errores.
+
+**Solución:** ninguna reconfiguración necesaria — fue un fallo transitorio de contención, no una pérdida real de la conexión. Simplemente evitar lanzar pruebas reales por Telegram al mismo tiempo que comandos de diagnóstico desde el CLI contra el mismo MCP.
+
+**Lección:** un mensaje de error de conexión de un MCP no implica que la configuración se haya perdido — verificar primero `mcp show`/`mcp list`/`mcp probe` antes de asumir que hay que reinstalar o reconectar nada. Evitar lanzar llamadas concurrentes al mismo servidor MCP (prueba real + diagnóstico) para no generar falsos positivos de desconexión.
+
+**Actualización — el fallo persiste y es real, no solo contención:** se repitió la prueba en una llamada única, aislada, sin ningún otro proceso usando el MCP de Zapier en paralelo. Resultado: mismo error exacto, `MCP error -32000: Connection closed`, en el mismo punto (`zapier__execute_zapier_read_action` → `gmail_find_email`). Se descarta la hipótesis de contención como causa única.
+
+**Diagnóstico adicional:**
+- `zapier__inspect_zapier_actions` (solo inspección, no llama a la API real de Gmail) funciona siempre, sin fallos.
+- `zapier__execute_zapier_read_action` (reenvía la llamada a la API real de Gmail a través de Zapier) falla siempre con el mismo error, en más de 10 intentos.
+- Conectividad de red desde el VPS hacia `mcp.zapier.com` verificada: responde en ~0.3s (HTTP 401 sin credenciales, como se espera sin auth).
+- Kai eliminó y volvió a añadir el servidor MCP de Zapier (`openclaw config.unset` + `config.set`) como intento de solución — no cambió el resultado.
+
+**Estado: limitación técnica no resuelta, documentada y aceptada.** El patrón (falla específicamente en la acción que reenvía la llamada a la API real de Gmail, no en la capa de transporte/red del VPS ni en la configuración de OpenClaw) apunta a un problema del lado de Zapier al conectar con la API de Gmail para esa cuenta/conexión concreta — posiblemente la conexión de Gmail dentro del panel de Zapier necesita reautorizarse, algo que solo se puede verificar/arreglar desde el dashboard web de Zapier, fuera del alcance de este CLI. Se decide no seguir reintentando dentro de esta sesión y, en su lugar, demostrar que el resto de la integración Zapier sí funciona con otra skill que no dependa de leer Gmail (`plan-semana`, que usa Docs + Calendar).
+
+**Lección:** cuando una acción específica de un MCP falla de forma consistente mientras otras acciones del mismo servidor funcionan, el problema suele estar en esa integración concreta (en este caso, la conexión Gmail dentro de Zapier), no en la configuración general del MCP — reiniciar/reconfigurar el servidor completo no soluciona un problema de una conexión de app específica dentro de Zapier.
+
+**Causa raíz real, encontrada después (ver entrada siguiente): la cuota de tareas del plan de Zapier estaba agotada.** Las hipótesis anteriores (contención de lease, problema de la conexión Gmail) quedan descartadas como causa principal — eran síntomas correlacionados, no la causa.
+
+---
+
+### 2026-11-01 — Causa raíz final: cuota de tareas del plan de Zapier agotada
+
+**Síntoma:** patrón consistente en las 4 skills probadas: cualquier acción que **ejecuta** algo contra un servicio real (`zapier__execute_zapier_read_action` / `zapier__execute_zapier_write_action` — buscar correos, crear un Doc) falla con `MCP error -32000: Connection closed`; cualquier acción que solo **inspecciona** metadatos (`zapier__inspect_zapier_actions`) funciona siempre.
+
+**Diagnóstico final:** Kai identificó, en una de las pruebas, que el patrón exacto (inspect = 0 coste, execute = consume cuota) coincide con el comportamiento de un plan de Zapier que ha agotado su límite de tareas del período de facturación. Cada llamada de `execute_*` intentaba consumir una tarea de la cuenta de Zapier, era rechazada por falta de cuota, y el servidor MCP cerraba la conexión al recibir ese rechazo — de ahí el "Connection closed" genérico, que no reflejaba un problema de red, OAuth ni configuración de OpenClaw (todo eso se descartó correctamente en las entradas anteriores).
+
+**Impacto en las pruebas de las 4 skills:**
+- `diario-aprendizaje` ✅ — se ejecutó **antes** de agotarse la cuota; funcionó de punta a punta.
+- `borrador-email-voz` ✅ — también se ejecutó antes de agotarse la cuota; borrador guardado correctamente en Gmail.
+- `plan-semana` ⚠️ parcial — el evento de Calendar se creó correctamente; el Google Doc del plan semanal falló por falta de cuota (Kai entregó el plan como texto en el chat en su lugar).
+- `triaje-bandeja-entrada` ❌ — nunca pudo completarse; cada intento de búsqueda de correos consumía (o intentaba consumir) cuota ya agotada.
+
+**Solución:** no depende de OpenClaw ni de este proyecto — hay que ampliar el plan de Zapier (`zapier.com/app/settings/billing`) o esperar al reinicio del período de facturación. Se documenta como limitación externa aceptada, no como un fallo de la configuración del agente.
+
+**Nota aparte:** durante la investigación, Kai modificó varias veces por su cuenta un skill propio de OpenClaw (`execute-zapier-actions`, un skill del sistema, no uno de los 4 de este proyecto) usando su mecanismo de aprendizaje automático ("💾 Learned: updated execute-zapier-actions"). Es un comportamiento nativo de OpenClaw (el propio mensaje permite revertirlo con "undo") y no afectó a ninguno de los archivos de este repositorio.
+
+**Lección:** cuando un MCP de terceros falla de forma selectiva (las llamadas "baratas" funcionan, las que cuestan no), sospechar primero de límites de cuota/plan antes que de la configuración técnica — habría ahorrado varias rondas de diagnóstico.

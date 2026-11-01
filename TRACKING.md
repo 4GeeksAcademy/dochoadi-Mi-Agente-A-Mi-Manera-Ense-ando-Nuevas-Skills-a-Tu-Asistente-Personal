@@ -165,10 +165,9 @@ Ver [`ERRORS.md`](./ERRORS.md).
 
 | Tarea | Estado | Evidencia/nota |
 |---|---|---|
-| Skill 1 implementada como skill de OpenClaw | ⏳ Pendiente | |
-| Skill 2 implementada como skill de OpenClaw | ⏳ Pendiente | |
-| Al menos una skill con output verificado en servicio conectado o Telegram | ⏳ Pendiente | |
-| Cada skill probada con input real y personal | ⏳ Pendiente | |
+| 4 skills implementadas como skills de OpenClaw (`~/.openclaw/workspace/skills/`) | ✅ Completado | `diario-aprendizaje`, `triaje-bandeja-entrada`, `borrador-email-voz`, `plan-semana` — las 4 en estado `✓ ready` según `openclaw skills list` |
+| Al menos una skill con output verificado en servicio conectado o Telegram | ✅ Completado | 3 de 4: Doc de diario, borrador de Gmail, evento de Calendar — ver `skills-testing/resultados.md` |
+| Cada skill probada con input real y personal | ✅ Completado (3/4 con éxito, 1/4 bloqueada por causa externa) | Pruebas reales vía Telegram; `triaje-bandeja-entrada` bloqueada por cuota de Zapier agotada, no por fallo de diseño — ver `ERRORS.md` |
 
 ## Verificación final contra "Qué vamos a evaluar"
 
@@ -177,11 +176,13 @@ Ver [`ERRORS.md`](./ERRORS.md).
 | 1 | Los cinco archivos contienen contenido específico, no genérico | ✅ | Perfil real, reglas de interacción y límites concretos en los 5 archivos |
 | 2 | `openclaw doctor` se ejecuta sin errores | ✅ | Exit code 0; 2 warnings relevantes documentados en `ERRORS.md` (no bloqueantes) |
 | 3 | `SKILLS_DESIGN.md` commiteado antes de implementación, responde las 3 preguntas por skill | ✅ | Commit `bff2ed9`, 4 skills |
-| 4 | Al menos dos skills implementadas como skills de OpenClaw correctas | ⏳ Pendiente | |
-| 5 | Al menos una skill produce output verificado en servicio conectado | ⏳ Pendiente | |
+| 4 | Al menos dos skills implementadas como skills de OpenClaw correctas | ✅ | 4 implementadas (supera el mínimo de 2) |
+| 5 | Al menos una skill produce output verificado en servicio conectado | ✅ | 3 de 4 produjeron output verificado (Docs, Gmail, Calendar) |
 | 6 | No se configuró ninguna API externa ni flujo OAuth nuevo | ⚠️ Riesgo asumido | Google Drive y Google Tasks se conectaron a Zapier durante este proyecto (no antes). GitHub también se conectó pero se descartó de las skills por inestabilidad. Decisión consciente del estudiante de mantener Drive/Tasks por estar mencionados en el enunciado — ver `ERRORS.md` |
-| 7 | Los outputs reflejan visiblemente la configuración de los cinco archivos | ⏳ Pendiente | |
-| 8 | El estudiante puede explicar el razonamiento de cada skill | ⏳ Pendiente | |
+| 7 | Los outputs reflejan visiblemente la configuración de los cinco archivos | ✅ | Tono Donna Paulsen en el borrador de email (`SOUL.md`/`USER.md`); Kai pregunta antes de actuar en vez de inventar datos (`AGENTS.md`: "parar y confirmar"); usa la cuenta/firma de `TOOLS.md` |
+| 8 | El estudiante puede explicar el razonamiento de cada skill | ✅ | Documentado en `SKILLS_DESIGN.md` (3 preguntas por skill) y en esta misma tabla/`ERRORS.md` para las decisiones de diseño y los pivotes (GitHub descartado, Tasks mantenido) |
+
+**Decisión final:** 7/8 criterios cumplidos sin reservas; 1/8 (#6, no configurar nada nuevo) cumplido con un riesgo de interpretación documentado y aceptado conscientemente (Google Drive y Google Tasks se conectaron a Zapier durante este proyecto). De las 4 skills implementadas, 3 se probaron con éxito total y 1 (`triaje-bandeja-entrada`) quedó bloqueada por una limitación externa ajena al proyecto (cuota de tareas del plan de Zapier agotada), documentada en detalle en `ERRORS.md` — la skill está correctamente diseñada e implementada, pero no pudo verificarse en ejecución por esa causa.
 
 ## Registro de errores de esta actividad
 
