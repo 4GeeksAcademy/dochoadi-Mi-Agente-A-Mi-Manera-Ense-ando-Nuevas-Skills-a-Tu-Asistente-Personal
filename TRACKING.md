@@ -159,7 +159,7 @@ Ver [`ERRORS.md`](./ERRORS.md).
 
 | Tarea | Estado | Evidencia/nota |
 |---|---|---|
-| `SKILLS_DESIGN.md` creado y commiteado antes de implementar | ⏳ Pendiente | |
+| `SKILLS_DESIGN.md` creado y commiteado antes de implementar | ✅ Completado | 4 skills diseñadas (commit `bff2ed9`), supera el mínimo de 2 |
 
 ## Paso 3 — Implementación y prueba de skills
 
@@ -176,7 +176,7 @@ Ver [`ERRORS.md`](./ERRORS.md).
 |---|---|---|---|
 | 1 | Los cinco archivos contienen contenido específico, no genérico | ✅ | Perfil real, reglas de interacción y límites concretos en los 5 archivos |
 | 2 | `openclaw doctor` se ejecuta sin errores | ✅ | Exit code 0; 2 warnings relevantes documentados en `ERRORS.md` (no bloqueantes) |
-| 3 | `SKILLS_DESIGN.md` commiteado antes de implementación, responde las 3 preguntas por skill | ⏳ Pendiente | |
+| 3 | `SKILLS_DESIGN.md` commiteado antes de implementación, responde las 3 preguntas por skill | ✅ | Commit `bff2ed9`, 4 skills |
 | 4 | Al menos dos skills implementadas como skills de OpenClaw correctas | ⏳ Pendiente | |
 | 5 | Al menos una skill produce output verificado en servicio conectado | ⏳ Pendiente | |
 | 6 | No se configuró ninguna API externa ni flujo OAuth nuevo | ⏳ Pendiente | |
