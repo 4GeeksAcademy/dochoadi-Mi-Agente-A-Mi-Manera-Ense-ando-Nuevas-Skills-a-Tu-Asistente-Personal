@@ -121,3 +121,9 @@ Tras esto, `openclaw mcp probe zapier` mostró `zapier: 17 tools, Codex approval
 2. **Limitación conocida y aceptada:** la versión original (sin redactar) permanece en el historial de git de ese commit anterior, ya pusheado a GitHub antes de detectarse el problema. Reescribir el historial (`git filter-repo` + `push --force`) habría sido la solución completa, pero el estudiante decidió conscientemente no hacerlo y dejar el historial como está, asumiendo que el dato estuvo expuesto brevemente en un repositorio público académico.
 
 **Lección:** no usar direcciones de correo de terceros reales en pruebas de integraciones de email, ni siquiera como "prueba" — usar siempre una dirección propia, una de pruebas controlada (ej. un alias propio), o un servicio de email descartable. Revisar las capturas de pantalla por datos de terceros **antes** de subirlas, no después.
+
+---
+
+## Mi Agente a Mi Manera: Enseñando Nuevas Skills a Tu Asistente Personal
+
+Registro de incidencias de este proyecto (configuración de los cinco archivos de identidad e implementación de skills). Se completa a medida que avanza el trabajo.

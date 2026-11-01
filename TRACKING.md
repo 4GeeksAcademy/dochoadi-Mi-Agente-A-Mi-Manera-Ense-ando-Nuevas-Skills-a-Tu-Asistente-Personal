@@ -137,3 +137,52 @@
 ## Registro de errores de esta actividad
 
 Ver [`ERRORS.md`](./ERRORS.md).
+
+---
+
+# Mi Agente a Mi Manera: Enseñando Nuevas Skills a Tu Asistente Personal
+
+Última actualización: 2026-11-01
+
+## Paso 1 — Configurar los cinco archivos de identidad
+
+| Tarea | Estado | Evidencia/nota |
+|---|---|---|
+| `IDENTITY.md` — nombre y símbolo | ⏳ Pendiente | |
+| `SOUL.md` — personalidad y estilo específicos | ⏳ Pendiente | |
+| `AGENTS.md` — límites inamovibles (privacidad + cuándo parar) | ⏳ Pendiente | |
+| `USER.md` — contexto real del usuario | ⏳ Pendiente | |
+| `TOOLS.md` — servicios vía Zapier y convenciones | ⏳ Pendiente | |
+| `openclaw doctor` sin errores | ⏳ Pendiente | |
+
+## Paso 2 — Diseño de skills
+
+| Tarea | Estado | Evidencia/nota |
+|---|---|---|
+| `SKILLS_DESIGN.md` creado y commiteado antes de implementar | ⏳ Pendiente | |
+
+## Paso 3 — Implementación y prueba de skills
+
+| Tarea | Estado | Evidencia/nota |
+|---|---|---|
+| Skill 1 implementada como skill de OpenClaw | ⏳ Pendiente | |
+| Skill 2 implementada como skill de OpenClaw | ⏳ Pendiente | |
+| Al menos una skill con output verificado en servicio conectado o Telegram | ⏳ Pendiente | |
+| Cada skill probada con input real y personal | ⏳ Pendiente | |
+
+## Verificación final contra "Qué vamos a evaluar"
+
+| # | Criterio | Estado | Nota |
+|---|---|---|---|
+| 1 | Los cinco archivos contienen contenido específico, no genérico | ⏳ Pendiente | |
+| 2 | `openclaw doctor` se ejecuta sin errores | ⏳ Pendiente | |
+| 3 | `SKILLS_DESIGN.md` commiteado antes de implementación, responde las 3 preguntas por skill | ⏳ Pendiente | |
+| 4 | Al menos dos skills implementadas como skills de OpenClaw correctas | ⏳ Pendiente | |
+| 5 | Al menos una skill produce output verificado en servicio conectado | ⏳ Pendiente | |
+| 6 | No se configuró ninguna API externa ni flujo OAuth nuevo | ⏳ Pendiente | |
+| 7 | Los outputs reflejan visiblemente la configuración de los cinco archivos | ⏳ Pendiente | |
+| 8 | El estudiante puede explicar el razonamiento de cada skill | ⏳ Pendiente | |
+
+## Registro de errores de esta actividad
+
+Ver [`ERRORS.md`](./ERRORS.md), sección "Mi Agente a Mi Manera".
