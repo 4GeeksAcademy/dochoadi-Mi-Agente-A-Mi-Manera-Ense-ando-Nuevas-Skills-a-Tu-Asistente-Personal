@@ -127,3 +127,25 @@ Tras esto, `openclaw mcp probe zapier` mostró `zapier: 17 tools, Codex approval
 ## Mi Agente a Mi Manera: Enseñando Nuevas Skills a Tu Asistente Personal
 
 Registro de incidencias de este proyecto (configuración de los cinco archivos de identidad e implementación de skills). Se completa a medida que avanza el trabajo.
+
+### 2026-11-01 — `openclaw doctor` avisa de que `TOOLS.md` se fusionará con `AGENTS.md`
+
+**Síntoma:** tras crear `TOOLS.md`, `openclaw doctor` mostró el aviso: *"TOOLS.md migration preview — ~/.openclaw/workspace/TOOLS.md will be archived and merged into AGENTS.md when customized."*
+
+**Diagnóstico:** se inspeccionó el código fuente del paquete instalado (`/usr/lib/node_modules/openclaw/dist/doctor-tools-md-migration-*.mjs`). Esta versión de OpenClaw trata `TOOLS.md` como una convención heredada ("legacy"): el aviso es solo una vista previa informativa. La fusión real únicamente ocurre si se ejecuta `openclaw doctor --fix`, no con un `openclaw doctor` normal.
+
+**Decisión:** no ejecutar `openclaw doctor --fix` para esta parte, de forma consciente, precisamente para mantener `TOOLS.md` como archivo independiente — que es lo que exige el checklist del proyecto (5 archivos separados). Es una diferencia de comportamiento de esta versión de OpenClaw frente al enunciado genérico del curso, igual que ocurrió con el campo "Greeting" de `IDENTITY.md` en el primer ejercicio.
+
+**Lección:** antes de ejecutar comandos de "auto-fix" de OpenClaw, revisar qué cambian exactamente — pueden alterar la estructura de archivos que un ejercicio requiere mantener separada.
+
+---
+
+### 2026-11-01 — `USER.md` cerca de su límite de caracteres (bootstrap)
+
+**Síntoma:** `openclaw doctor` reportó `USER.md: 3.932 chars (98% of max/file 4.000)` — riesgo de truncado del archivo al cargarse en cada sesión.
+
+**Diagnóstico:** al añadir el perfil real y las reglas de modo "advisor"/"builder" sobre el contenido ya existente (saludo + personalidad Donna Paulsen), el archivo se acercó al límite fijo de 4.000 caracteres que OpenClaw reserva para `USER.md`.
+
+**Solución:** se le pidió a Kai, en conversación, que condensara la redacción de sus propias directivas sin perder ninguna (frases más cortas, fusión de bloques redundantes), dejando margen. Resultado: 3.220 caracteres (80% del límite).
+
+**Lección:** vigilar el tamaño de `USER.md` a medida que se añade contexto real; dejar margen para futuras actualizaciones en vez de llenarlo justo al límite.

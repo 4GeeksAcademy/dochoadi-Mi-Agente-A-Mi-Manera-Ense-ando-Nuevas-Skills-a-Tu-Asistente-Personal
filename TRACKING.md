@@ -148,12 +148,12 @@ Ver [`ERRORS.md`](./ERRORS.md).
 
 | Tarea | Estado | Evidencia/nota |
 |---|---|---|
-| `IDENTITY.md` — nombre y símbolo | ⏳ Pendiente | |
-| `SOUL.md` — personalidad y estilo específicos | ⏳ Pendiente | |
-| `AGENTS.md` — límites inamovibles (privacidad + cuándo parar) | ⏳ Pendiente | |
-| `USER.md` — contexto real del usuario | ⏳ Pendiente | |
-| `TOOLS.md` — servicios vía Zapier y convenciones | ⏳ Pendiente | |
-| `openclaw doctor` sin errores | ⏳ Pendiente | |
+| `IDENTITY.md` — nombre y símbolo | ✅ Completado | Ya personalizado en la actividad anterior (Kai, Donna Paulsen) |
+| `SOUL.md` — personalidad y estilo específicos | ✅ Completado | Ya personalizado en la actividad anterior (Donna Paulsen para Harvey Specter) |
+| `AGENTS.md` — límites inamovibles (privacidad + cuándo parar) | ✅ Completado | 2 red lines nuevas añadidas vía conversación con Kai: no compartir info de clientes; confirmar antes de acciones salientes/cambios de código |
+| `USER.md` — contexto real del usuario | ✅ Completado | Perfil real (rol, empresas, proyectos, objetivo) + modo "builder" + modo "advisor", añadido vía conversación, sin tocar directivas previas |
+| `TOOLS.md` — servicios vía Zapier y convenciones | ✅ Completado | Creado vía conversación: Calendar/Gmail/Docs/Sheets/Drive/Tasks/GitHub/Telegram, cuenta `dodochoadiaz@gmail.com`, firma, confirmación obligatoria antes de acciones salientes |
+| `openclaw doctor` sin errores | ✅ Completado | Exit code 0; solo warnings no bloqueantes, ver `ERRORS.md` para 2 hallazgos documentados |
 
 ## Paso 2 — Diseño de skills
 
@@ -174,8 +174,8 @@ Ver [`ERRORS.md`](./ERRORS.md).
 
 | # | Criterio | Estado | Nota |
 |---|---|---|---|
-| 1 | Los cinco archivos contienen contenido específico, no genérico | ⏳ Pendiente | |
-| 2 | `openclaw doctor` se ejecuta sin errores | ⏳ Pendiente | |
+| 1 | Los cinco archivos contienen contenido específico, no genérico | ✅ | Perfil real, reglas de interacción y límites concretos en los 5 archivos |
+| 2 | `openclaw doctor` se ejecuta sin errores | ✅ | Exit code 0; 2 warnings relevantes documentados en `ERRORS.md` (no bloqueantes) |
 | 3 | `SKILLS_DESIGN.md` commiteado antes de implementación, responde las 3 preguntas por skill | ⏳ Pendiente | |
 | 4 | Al menos dos skills implementadas como skills de OpenClaw correctas | ⏳ Pendiente | |
 | 5 | Al menos una skill produce output verificado en servicio conectado | ⏳ Pendiente | |

@@ -56,6 +56,8 @@ Every few days, use a scheduled automation to review recent daily notes. Fold st
 - Confirm destructive or irreversible actions the user didn't ask for.
 - Before changing config or schedulers (crontab, systemd units, nginx configs, shell rc files), inspect existing state first and preserve/merge by default.
 - Prefer `trash` over `rm` - recoverable beats gone forever.
+- Never share client information from my work (Agilimo, BlackBerry, or any client) in public spaces, code repos, or with unauthorized third parties.
+- Before any outbound action (email, message, post, calendar event) or any code change to my projects (Padel School Manager, Shift Planning Portal), stop and ask for explicit confirmation of the final content, even if I already gave the initial order.
 
 ## Existing Solutions Preflight
 
