@@ -4,16 +4,18 @@ Diseño de las skills personalizadas de Kai para el proyecto "Mi Agente a Mi Man
 
 ---
 
-## Skill 1 — Resumen diario de GitHub por Telegram
+## Skill 1 — Diario de aprendizaje
 
 **¿Qué hace esta skill?**
-Lee los issues abiertos y los commits recientes de mis repos de código (Padel School Manager, Shift Planning Portal) y me envía un briefing breve por Telegram.
+Le cuento a Kai qué aprendí hoy (unos pocos puntos) y añade una entrada estructurada a un Google Doc que uso como diario de aprendizaje — útil para la propia formación de 4Geeks y para mi objetivo de pasar a Director de CS en SaaS/ciberseguridad.
 
 **¿Qué input necesita el agente?**
-Un mensaje de activación (p. ej. "dame el resumen de GitHub" o "resumen diario"), opcionalmente con el nombre del repo si quiero uno en concreto. Ya sabe por `TOOLS.md` que GitHub está disponible para revisar mis proyectos, y por `USER.md` que soy un builder técnico (puede usar jerga de desarrollo sin explicarla) y que las respuestas deben ser concisas y directas.
+Unos pocos puntos en lenguaje natural sobre lo aprendido hoy (p. ej. de la formación de IA, de mis proyectos personales, o de mi trabajo). Ya sabe por `USER.md` mi perfil y objetivo profesional, y por `TOOLS.md` la cuenta de Google Docs a usar.
 
 **¿Cómo es un buen output?**
-Un mensaje de Telegram con una lista corta: issues abiertos (título + repo) y commits del día (mensaje + autor), sin relleno, en el tono directo definido en `SOUL.md`/`USER.md`. Se sabe que funcionó si el mensaje llega a Telegram con datos reales de mis repos (no un placeholder).
+Una entrada nueva, fechada y bien formateada, añadida al final del Google Doc de diario (si no existe, lo crea la primera vez). Se sabe que funcionó si la entrada aparece en el Doc con fecha real y contenido real, no genérico.
+
+> **Nota:** la skill originalmente diseñada aquí (`resumen-github-diario`) se descartó — ver `ERRORS.md`, sección "GitHub, Google Drive y Google Tasks no están conectados vía Zapier": requería GitHub, que no estaba conectado, y el enunciado prohíbe configurar una conexión nueva como parte de este proyecto.
 
 ---
 

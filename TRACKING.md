@@ -179,7 +179,7 @@ Ver [`ERRORS.md`](./ERRORS.md).
 | 3 | `SKILLS_DESIGN.md` commiteado antes de implementación, responde las 3 preguntas por skill | ✅ | Commit `bff2ed9`, 4 skills |
 | 4 | Al menos dos skills implementadas como skills de OpenClaw correctas | ⏳ Pendiente | |
 | 5 | Al menos una skill produce output verificado en servicio conectado | ⏳ Pendiente | |
-| 6 | No se configuró ninguna API externa ni flujo OAuth nuevo | ⏳ Pendiente | |
+| 6 | No se configuró ninguna API externa ni flujo OAuth nuevo | ⚠️ Riesgo asumido | Google Drive y Google Tasks se conectaron a Zapier durante este proyecto (no antes). GitHub también se conectó pero se descartó de las skills por inestabilidad. Decisión consciente del estudiante de mantener Drive/Tasks por estar mencionados en el enunciado — ver `ERRORS.md` |
 | 7 | Los outputs reflejan visiblemente la configuración de los cinco archivos | ⏳ Pendiente | |
 | 8 | El estudiante puede explicar el razonamiento de cada skill | ⏳ Pendiente | |
 

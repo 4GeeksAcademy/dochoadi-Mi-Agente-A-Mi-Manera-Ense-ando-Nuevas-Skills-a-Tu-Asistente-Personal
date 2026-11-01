@@ -149,3 +149,27 @@ Registro de incidencias de este proyecto (configuración de los cinco archivos d
 **Solución:** se le pidió a Kai, en conversación, que condensara la redacción de sus propias directivas sin perder ninguna (frases más cortas, fusión de bloques redundantes), dejando margen. Resultado: 3.220 caracteres (80% del límite).
 
 **Lección:** vigilar el tamaño de `USER.md` a medida que se añade contexto real; dejar margen para futuras actualizaciones en vez de llenarlo justo al límite.
+
+---
+
+### 2026-11-01 — GitHub, Google Drive y Google Tasks no están conectados vía Zapier
+
+**Síntoma:** al probar la skill `resumen-github-diario` desde Telegram con un input real, Kai respondió que no tiene acceso a GitHub ("ni gh CLI instalado ni token OAuth configurado") y propuso configurar un token clásico de GitHub o reconectarlo desde Settings → Agents → Tools.
+
+**Diagnóstico:** se verificó con Kai, usando sus propias herramientas de Zapier (`zapier__discover_zapier_actions`, `zapier__inspect_zapier_actions`), sin configurar nada nuevo, qué apps están realmente habilitadas. Resultado: solo **Gmail, Google Calendar, Google Docs y Google Sheets** están conectadas y operativas. **GitHub, Google Drive y Google Tasks no están conectados** — Drive aparece en el catálogo de Zapier pero no está habilitado, Tasks ni siquiera aparece, y GitHub no tiene ninguna conexión activa (ni por Zapier ni como herramienta nativa del agente).
+
+Esto contradice el enunciado genérico del proyecto, que lista GitHub y Google Tasks/Drive como servicios ya accesibles vía Zapier — en la práctica, la conexión de Zapier de este estudiante (hecha en el ejercicio anterior) solo habilitó 4 de las 7 apps mencionadas en la guía.
+
+**Por qué no se soluciona conectando esas apps:** el enunciado de este proyecto prohíbe explícitamente configurar una API externa o un flujo OAuth nuevo ("Todas las skills deben funcionar con las herramientas actualmente conectadas... Cualquier skill que requiera una nueva conexión no será aceptada"). Conectar GitHub, Drive o Tasks ahora violaría esa regla, aunque técnicamente sería posible.
+
+**Decisión inicial:** se rediseñó `resumen-github-diario` para no depender de GitHub, y se consideró rediseñar `triaje-bandeja-entrada` para usar Google Sheets en vez de Tasks.
+
+**Actualización — el estudiante conecta Drive y Tasks manualmente:** durante la revisión, el estudiante conectó GitHub, Google Drive y Google Tasks a Zapier por su cuenta, fuera de esta conversación. Esto generó un conflicto directo con el criterio de evaluación "No se ha configurado ninguna API externa ni flujo OAuth nuevo como parte del proyecto" y con el enunciado ("cualquier skill que requiera una nueva conexión no será aceptada").
+
+**Decisión final del estudiante:**
+- **GitHub:** se descarta por completo. Pese a la conexión añadida, el acceso seguía siendo inestable en las pruebas (Kai reportó accesos contradictorios: una vez "conectado, 20 acciones", otra vez "sin acceso"), y el riesgo de incumplimiento del criterio no compensaba. La skill 1 (`resumen-github-diario`) se sustituye por **Diario de aprendizaje**, que solo usa Google Docs (ya conectado desde el ejercicio anterior).
+- **Google Drive y Google Tasks:** el estudiante decide mantenerlas, ya que ambas aparecen mencionadas explícitamente en el enunciado del proyecto como servicios disponibles vía Zapier. La skill `triaje-bandeja-entrada` se mantiene con su diseño original (crea Google Tasks), sin rediseñar a Sheets.
+
+**Riesgo asumido y documentado:** Google Drive y Google Tasks se conectaron a Zapier **durante este proyecto**, no antes. Esto es, en sentido estricto, una configuración nueva de conexión, lo cual el enunciado pide evitar. El estudiante asume este riesgo de interpretación conscientemente (mismo patrón que el riesgo documentado en el ejercicio anterior sobre el criterio del evento de Calendar) — ver la tabla de verificación final en `TRACKING.md`.
+
+**Lección:** antes de diseñar skills a partir de un enunciado genérico, verificar con el propio agente (sin configurar nada nuevo) qué servicios están realmente conectados — la lista de la guía puede no coincidir con la conexión real del estudiante. Y: una vez identificado un posible incumplimiento de un criterio explícito, documentarlo con la misma transparencia tanto si se revierte como si se asume el riesgo.
