@@ -223,3 +223,28 @@ Esto contradice el enunciado genérico del proyecto, que lista GitHub y Google T
 **Nota aparte:** durante la investigación, Kai modificó varias veces por su cuenta un skill propio de OpenClaw (`execute-zapier-actions`, un skill del sistema, no uno de los 4 de este proyecto) usando su mecanismo de aprendizaje automático ("💾 Learned: updated execute-zapier-actions"). Es un comportamiento nativo de OpenClaw (el propio mensaje permite revertirlo con "undo") y no afectó a ninguno de los archivos de este repositorio.
 
 **Lección:** cuando un MCP de terceros falla de forma selectiva (las llamadas "baratas" funcionan, las que cuestan no), sospechar primero de límites de cuota/plan antes que de la configuración técnica — habría ahorrado varias rondas de diagnóstico.
+
+---
+
+## 2026-11-03 — Kai propuso un comando de CLI inexistente para conectar GitHub
+
+**Síntoma:** al pedirle a Kai que escribiera un fichero en este repositorio, respondió que no tenía credencial de GitHub configurada y propuso ejecutar:
+```
+openclaw secrets request github_token "necesito el token para escribir en el repo de 4Geeks"
+```
+
+**Diagnóstico:**
+```
+openclaw secrets --help
+# Commands: apply, audit, configure, reload, store, help
+```
+Ese subcomando (`request`) no existe en la versión instalada (OpenClaw 2026.10.7). Kai se lo inventó. Tampoco servía el plugin de GitHub ya integrado en OpenClaw (`@openclaw/github` → `github_read`/`github_search`): es de solo lectura y solo repos públicos.
+
+**Solución real:** no hacía falta tocar ninguna configuración de OpenClaw (ni el Control UI, ni `tools.github`). Bastaba con darle al VPS una identidad nativa de GitHub CLI:
+1. Instalar `gh` CLI desde el repositorio oficial de `apt`.
+2. `gh auth login --hostname github.com --git-protocol https` → login por device-flow (código de un solo uso introducido en `github.com/login/device`), sin necesidad de túnel SSH ni de abrir el Control UI del gateway.
+3. Verificado con `gh auth status` y `gh api repos/.../... --jq '.permissions'` → permiso `push`/`admin` confirmado.
+
+Las herramientas de ejecución de shell de Kai heredan automáticamente la identidad nativa de `gh`, así que tras este paso Kai pudo hacer commits y push por sí mismo sin ninguna otra configuración. Detalle completo del proceso en `SKILL_LOG.md`.
+
+**Lección:** cuando el propio agente proponga un comando de CLI como solución, verificar primero con `--help` que el comando existe antes de seguir sus pasos — Kai puede alucinar nombres de comandos plausibles que no están en la versión instalada.

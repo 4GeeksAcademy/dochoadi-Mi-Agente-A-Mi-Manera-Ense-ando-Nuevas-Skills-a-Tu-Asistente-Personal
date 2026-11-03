@@ -73,3 +73,47 @@ Pasar de un agente genérico a uno personalizado: rellenar los cinco archivos de
 - El estudiante puede explicar el razonamiento detrás de cada skill: por qué esa tarea, por qué ese input, por qué ese formato de output.
 
 Nota del enunciado: un `SKILLS_DESIGN.md` bien razonado con una implementación parcial puntúa más alto que una skill que funciona sin ningún razonamiento de diseño documentado.
+
+---
+
+# Contexto — Conectar tu Agente de IA a la API de 4Geeks Academy
+
+## Objetivo
+Dar a OpenClaw acceso real, autenticado, a dos sistemas más: la API pública de 4Geeks Academy (Breathecode) y GitHub (para poder leer/escribir en este mismo repositorio), y usar esa conexión para crear 6 skills de un único endpoint cada una, conversando con el agente en vez de escribiendo las skills a mano.
+
+Prompt original del estudiante a OpenClaw (registrado en `SKILL_LOG.md`):
+> "Nuevo Objetivo - Conectar tu asistente de IA (OpenClaw) a la API de 4Geeks Academy - Creo que esto esta ya logrado. Por otro lado vamos a crear 4 Skills nuevas, de las cuales te dare un prompt por cada una de ellas, y hay que documentarlas dentro del fichero SKILL_LOG.md creado en el repositorio..."
+
+## Alcance
+- Dos conexiones nuevas en juego: la API de 4Geeks (token `FOURGEEKS_TOKEN` ya existente en el sistema, verificado funcional) y GitHub (identidad nueva, necesaria para que el propio agente pudiera escribir en el repo).
+- Cada skill debe depender de **un único endpoint** de la API de 4Geeks (Breathecode), sin mezclar varias llamadas en una misma skill.
+- Las skills se crean conversando con OpenClaw (un prompt por skill), no escribiendo el `SKILL.md` a mano.
+- Cada skill se documenta en `SKILL_LOG.md`: prompt usado, endpoint, prueba real y resultado.
+
+## Qué se hizo (checklist)
+
+**Paso 1 — Conectar OpenClaw con GitHub:**
+- [x] Instalar GitHub CLI (`gh`) en el VPS.
+- [x] Autenticar `gh` con la cuenta `dochoadi` vía OAuth device-flow (scopes `repo`, `workflow`, `read:org`, `gist`).
+- [x] Verificar permiso `push`/`admin` sobre este repo exacto.
+- [x] Documentar el proceso completo en `SKILL_LOG.md` (incluyendo el comando inventado por Kai que no existía, y la vía real).
+
+**Paso 2 — Verificar la conexión con la API de 4Geeks:**
+- [x] Confirmar que `FOURGEEKS_TOKEN` es válido contra `GET /v1/admissions/user/me` (200 OK).
+
+**Paso 3 — Crear 4 skills de un único endpoint (Skills 1-4):**
+- [x] Skill 1 `authenticate-4geeks` — valida el token/sesión del estudiante.
+- [x] Skill 2 `4geeks-proyectos` — lista los cohorts/proyectos y su estado.
+- [x] Skill 3 `4geeks-pendientes` — filtra los proyectos en curso (`ACTIVE`).
+- [x] Skill 4 `4geeks-progreso` — calcula el porcentaje global de avance.
+
+**Paso 4 — Crear 2 skills extendidas adicionales (Skills 5-6):**
+- [x] Skill 5 `calendario-4geeks` — próximos eventos (`GET /v1/events/me`), filtrados a 7 días.
+- [x] Skill 6 `mis-certificados-4geeks` — certificados emitidos (`GET /v1/certificate/me`).
+
+## Criterios de evaluación (reconstruidos a partir del enunciado por pasos recibido)
+- La conexión a GitHub y a la API de 4Geeks funciona y está verificada con una llamada real, no solo configurada.
+- No se usa ninguna vía de conexión inventada o no documentada (se corrigió explícitamente un comando de CLI que Kai sugirió y que no existe).
+- Cada una de las 6 skills depende de un único endpoint, documentado con su URL, cabecera de autenticación y campos usados.
+- Cada skill se probó con una llamada real contra la API (no con datos de ejemplo) y el resultado se registró en `SKILL_LOG.md`.
+- No se expone el token (`FOURGEEKS_TOKEN`) ni el token OAuth de GitHub en ningún fichero del repositorio.

@@ -187,3 +187,57 @@ Ver [`ERRORS.md`](./ERRORS.md).
 ## Registro de errores de esta actividad
 
 Ver [`ERRORS.md`](./ERRORS.md), sección "Mi Agente a Mi Manera".
+
+---
+
+# Conectar tu Agente de IA a la API de 4Geeks Academy
+
+## Paso 1 — Conectar OpenClaw con GitHub
+
+| Tarea | Estado | Evidencia/nota |
+|---|---|---|
+| Diagnosticar por qué Kai no podía escribir en el repo | ✅ Completado | Comando propuesto por Kai (`openclaw secrets request github_token`) no existe en esta versión; verificado con `openclaw secrets --help` — ver `ERRORS.md` |
+| `gh` CLI instalado en el VPS | ✅ Completado | Instalado desde el repositorio oficial de `apt` (`cli.github.com/packages`) |
+| `gh auth login` vía device-flow | ✅ Completado | Cuenta `dochoadi`, scopes `repo`, `workflow`, `read:org`, `gist` |
+| Permiso de escritura verificado sobre el repo exacto | ✅ Completado | `gh api repos/.../... --jq '.permissions'` → `push: true, admin: true` |
+| Proceso documentado | ✅ Completado | `SKILL_LOG.md`, sección inicial |
+
+## Paso 2 — Verificar la conexión con la API de 4Geeks Academy
+
+| Tarea | Estado | Evidencia/nota |
+|---|---|---|
+| Token `FOURGEEKS_TOKEN` válido | ✅ Completado | `GET /v1/admissions/user/me` → 200 OK, datos reales del alumno (Daniel Ochoa) |
+
+## Paso 3 — Crear 4 skills de un único endpoint (Skills 1-4)
+
+| Skill | Endpoint | Estado | Evidencia/nota |
+|---|---|---|---|
+| `authenticate-4geeks` | `GET /v1/admissions/user/me` | ✅ Completado | Token válido, perfil completo recuperado |
+| `4geeks-proyectos` | `GET /v1/admissions/user/me` (`cohorts[]`) | ✅ Completado | 32 proyectos listados con estado |
+| `4geeks-pendientes` | `GET /v1/admissions/user/me` (filtro `ACTIVE`) | ✅ Completado | 27 proyectos pendientes identificados |
+| `4geeks-progreso` | `GET /v1/admissions/user/me` (cálculo sobre `cohorts[]`) | ✅ Completado | 12% completado / 84% en curso / 3% no completado |
+
+## Paso 4 — Crear 2 skills extendidas adicionales (Skills 5-6)
+
+| Skill | Endpoint | Estado | Evidencia/nota |
+|---|---|---|---|
+| `calendario-4geeks` | `GET /v1/events/me` | ✅ Completado | 3 eventos encontrados en los próximos 7 días, con enlace a Google Meet |
+| `mis-certificados-4geeks` | `GET /v1/certificate/me` | ✅ Completado | 3 certificados recuperados (curso, academia, estado, fecha) |
+
+## Verificación final
+
+| # | Criterio | Estado | Nota |
+|---|---|---|---|
+| 1 | Conexión a GitHub funcional y verificada | ✅ | `gh auth status` + permiso `push`/`admin` confirmado contra la API de GitHub, no solo configurado |
+| 2 | Conexión a la API de 4Geeks funcional y verificada | ✅ | `/v1/admissions/user/me` responde 200 con datos reales |
+| 3 | No se usó ninguna vía de conexión inventada o no verificada | ✅ | Se detectó y descartó el comando inexistente propuesto por Kai antes de aplicarlo — ver `ERRORS.md` |
+| 4 | 6 skills, cada una de un único endpoint | ✅ | Ninguna mezcla más de una llamada a la API por skill |
+| 5 | Cada skill probada con una llamada real, no con datos de ejemplo | ✅ | Las 6 pruebas usan el token real del alumno contra la API en producción |
+| 6 | Resultado de cada skill documentado | ✅ | `SKILL_LOG.md`: prompt, endpoint, hallazgos técnicos, comando ejecutado y resultado real por cada una de las 6 skills |
+| 7 | Ningún token expuesto en el repositorio | ✅ | Escaneo de secretos en todo el repo (tokens, API keys, passwords) sin hallazgos |
+
+**Decisión final:** 6/6 skills implementadas y probadas con éxito contra la API real (supera el mínimo de 4 + 2 pedido en el enunciado por pasos). La única incidencia de la fase fue un comando de CLI inventado por el propio agente, detectada antes de ejecutarlo y resuelta con la vía real (identidad nativa de `gh` CLI) — documentada en `ERRORS.md` para que quede como aprendizaje, no oculta como si no hubiera pasado.
+
+## Registro de errores de esta actividad
+
+Ver [`ERRORS.md`](./ERRORS.md), sección "Kai propuso un comando de CLI inexistente para conectar GitHub".
