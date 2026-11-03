@@ -470,3 +470,191 @@ estados educacionales de los cohorts. El alumno lleva completado el **12%**
 de los proyectos, tiene un **84% en curso** y un **3% no completado**.
 
 ---
+
+# Skill 5 — Calendario 4Geeks
+
+## Prompt del usuario
+
+> *"Quiero una skill llamada `calendario-4geeks`. Cuando le pregunte '¿qué
+> eventos tengo en 4Geeks esta semana?' o algo equivalente, debe llamar a
+> `GET https://breathecode.herokuapp.com/v1/events/me` con mi `FOURGEEKS_TOKEN`,
+> filtrar los eventos cuya `starting_at` caiga en los próximos 7 días, y
+> responderme en una lista clara con título, fecha/hora y un enlace si lo hay."*
+> — Dani, 2026-11-03 13:05 UTC
+
+## Descripción de la skill
+
+Skill `calendario-4geeks` que consulta los eventos de la plataforma 4Geeks
+Academy y filtra los que ocurren en los próximos 7 días.
+
+- **Nombre del fichero SKILL.md:**
+  `.openclaw/workspace/skills/calendario-4geeks/SKILL.md`
+- **Input:** Ninguno (usa `FOURGEEKS_TOKEN`)
+- **Output esperado:** Lista de eventos con título, fecha/hora y enlace
+
+## Endpoint utilizado
+
+| Propiedad | Valor |
+|---|---|
+| **URL** | `GET https://breathecode.herokuapp.com/v1/events/me` |
+| **Header** | `Authorization: Token ${FOURGEEKS_TOKEN}` |
+| **Campos clave** | `title`, `starting_at`, `ending_at`, `live_stream_url`, `event_type` |
+
+### Hallazgos técnicos
+
+- El endpoint **no requiere trailing slash** (funciona sin `/`)
+- Requiere el token expandido correctamente con `${FOURGEEKS_TOKEN}`, no con
+  comillas simples que impidan la expansión de la variable de shell
+- Devuelve eventos pasados y futuros; el filtro de 7 días se aplica en el
+  cliente con Python
+- Cada evento incluye `live_stream_url` (enlace Google Meet o YouTube),
+  `event_type` con nombre del tipo de evento, y `academy` con sede
+
+## Prueba de la skill
+
+### Comando ejecutado
+
+```bash
+curl -s -H "Authorization: Token ${FOURGEEKS_TOKEN}" \
+  "https://breathecode.herokuapp.com/v1/events/me" | python3 -c "
+import sys, json
+from datetime import datetime, timezone, timedelta
+data = json.load(sys.stdin)
+now = datetime.now(timezone.utc)
+week = now + timedelta(days=7)
+print(f'Eventos totales: {len(data)}')
+print(f'Filtrando desde {now.date()} hasta {week.date()}')
+print()
+for e in data:
+    start = e.get('starting_at','')
+    if start:
+        start_dt = datetime.fromisoformat(start.replace('Z','+00:00'))
+        if now <= start_dt <= week:
+            title = e.get('title','?')
+            url = e.get('live_stream_url') or '—'
+            print(f'📅 {title}')
+            print(f'   🕐 {start_dt.strftime(\"%a %d %b %Y %H:%M UTC\")}')
+            print(f'   🔗 {url}')
+            print()
+"
+```
+
+### Resultado (próximos 7 días desde el 3 nov 2026)
+
+**Eventos totales en la API: 7 | En los próximos 7 días: 3**
+
+📅 **Your Way Into the AI Jobs That Pay 62% More**
+   🕐 Mon 03 Nov 2026 23:00 UTC (martes 4 nov 00:00 CET)
+   🔗 https://meet.google.com/odd-axjw-dcb
+
+📅 **Your Way Into the AI Jobs That Pay 62% More (DAY 2)**
+   🕐 Tue 04 Nov 2026 23:00 UTC (miércoles 5 nov 00:00 CET)
+   🔗 https://meet.google.com/odd-axjw-dcb
+
+📅 **Your Way Into the AI Jobs That Pay 62% More (DAY 3)**
+   🕐 Wed 05 Nov 2026 23:00 UTC (jueves 6 nov 00:00 CET)
+   🔗 https://meet.google.com/odd-axjw-dcb
+
+### Conclusión
+
+✅ **Skill 5 funcional.** 3 eventos encontrados en los próximos 7 días,
+todos del AI Intensive "Your Way Into the AI Jobs That Pay 62% More" con
+enlace a Google Meet. El endpoint `events/me` funciona correctamente con
+el token de estudiante.
+
+---
+
+# Skill 6 — Mis certificados 4Geeks
+
+## Prompt del usuario
+
+> *"Quiero una skill llamada `mis-certificados-4geeks`. Cuando le pida
+> 'enséñame mis certificados de 4Geeks' o similar, debe llamar a
+> `GET https://breathecode.herokuapp.com/v1/certificate/me` con mi
+> `FOURGEEKS_TOKEN` y devolverme, por cada certificado, el nombre del curso,
+> la academia, el estado y la fecha."*
+> — Dani, 2026-11-03 13:05 UTC
+
+## Descripción de la skill
+
+Skill `mis-certificados-4geeks` que consulta los certificados emitidos al
+alumno en 4Geeks Academy.
+
+- **Nombre del fichero SKILL.md:**
+  `.openclaw/workspace/skills/mis-certificados-4geeks/SKILL.md`
+- **Input:** Ninguno (usa `FOURGEEKS_TOKEN`)
+- **Output esperado:** Lista de certificados con curso, academia, estado y fecha
+
+## Endpoint utilizado
+
+| Propiedad | Valor |
+|---|---|
+| **URL** | `GET https://breathecode.herokuapp.com/v1/certificate/me` |
+| **Header** | `Authorization: Token ${FOURGEEKS_TOKEN}` |
+| **Campos clave** | `specialty.name`, `academy.name`, `status`, `issued_at`, `pdf_url`, `preview_url` |
+
+### Hallazgos técnicos
+
+- El endpoint **no requiere trailing slash**
+- Usa la misma autenticación que el resto de la API de Breathecode
+- Los certificados se emiten en estado `PERSISTED` (generado y encolado para
+  PDF)
+- Incluyen enlace al PDF descargable y a una vista previa
+- Firmados por instructores (`signed_by` con rol)
+- Algunos tienen fecha de expiración (`expires_at`), otros no
+
+## Prueba de la skill
+
+### Comando ejecutado
+
+```bash
+curl -s -H "Authorization: Token ${FOURGEEKS_TOKEN}" \
+  "https://breathecode.herokuapp.com/v1/certificate/me" | python3 -c "
+import sys, json
+data = json.load(sys.stdin)
+print(f'Total certificados: {len(data)}')
+print()
+for c in data:
+    specialty = c.get('specialty',{}).get('name','?')
+    academy = c.get('academy',{}).get('name','?')
+    status = c.get('status','?')
+    issued = c.get('issued_at','?')[:10] if c.get('issued_at') else '?'
+    pdf = c.get('pdf_url','—')
+    print(f'🎓 {specialty}')
+    print(f'   🏛  {academy}')
+    print(f'   📄 Estado: {status}')
+    print(f'   📅 Emitido: {issued}')
+    print(f'   🔗 {pdf}')
+    print()
+"
+```
+
+### Resultado
+
+**Total certificados: 3**
+
+🎓 **Basic personal assistants with Openclaw**
+   🏛  4Geeks Madrid
+   📄 Estado: PERSISTED
+   📅 Emitido: 2026-10-28
+   🔗 https://certificate.4geeks.com/pdf/27daed3b4ec03acd15e2b6ade196dd52beffcc37
+
+🎓 **Working with AI Coding Agents**
+   🏛  4Geeks Madrid
+   📄 Estado: PERSISTED
+   📅 Emitido: 2026-10-21
+   🔗 https://certificate.4geeks.com/pdf/c2b2da22ad52695b3dbf4bd87f4e48faa80ce728
+
+🎓 **No-Code & Automation**
+   🏛  4Geeks Madrid
+   📄 Estado: PERSISTED
+   📅 Emitido: 2026-08-27
+   🔗 https://certificate.4geeks.com/pdf/91015bc10d55ab718f529de280cd4ee3f62d5865
+
+### Conclusión
+
+✅ **Skill 6 funcional.** 3 certificados recuperados, todos emitidos por
+4Geeks Madrid, en estado PERSISTED (generados). El más reciente es "Basic
+personal assistants with Openclaw" del 28 de octubre de 2026.
+
+---
