@@ -148,3 +148,99 @@ slash da 200). La API está en Heroku y devuelve JSON con los campos
 | Secret store | Vacío (no hace falta — el token 4Geeks vive como env var) |
 
 ---
+
+# Skill 1 — Autenticación en 4Geeks Academy
+
+## Prompt del usuario
+
+> *"Quiero crear una skill que me permita verificar si mi token de estudiante
+> almacenado en la variable de entorno FOURGEEKS_TOKEN es válido y mi sesión
+> está activa en 4Geeks."*
+> — Dani, 2026-11-03 11:14 UTC
+
+## Descripción de la skill
+
+Skill `authenticate-4geeks` que verifica la validez del token de estudiante de
+4Geeks Academy almacenado en la variable de entorno `FOURGEEKS_TOKEN`,
+consultando el perfil del alumno en la API de Breathecode.
+
+- **Nombre del fichero SKILL.md:**
+  `.openclaw/workspace/skills/authenticate-4geeks/SKILL.md`
+- **Configuración en openclaw.json:** entrada `authenticate-4geeks` dentro de
+  `skills.entries`, con `FOURGEEKS_TOKEN` referenciado como `${FOURGEEKS_TOKEN}`
+- **Input:** Ninguno (lee la variable de entorno automáticamente)
+- **Output esperado:** Nombre completo del estudiante + email + estado de cohorts
+
+## Endpoint utilizado
+
+| Propiedad | Valor |
+|---|---|
+| **URL** | `GET https://breathecode.herokuapp.com/v1/admissions/user/me` |
+| **Header** | `Authorization: Token ${FOURGEEKS_TOKEN}` |
+| **Formato** | JSON |
+| **Campos clave** | `id`, `email`, `first_name`, `last_name`, `cohorts` |
+
+### Hallazgos técnicos
+
+- El endpoint **no tolera trailing slash** (`/me/` → 404, `/me` → 200)
+- La API está hosteada en Heroku
+- Devuelve información extensa del perfil incluyendo cohorts, rol (`STUDENT`),
+  estado financiero (`UP_TO_DATE`) y educacional (`ACTIVE`/`GRADUATED`)
+
+## Prueba de la skill
+
+### Comando ejecutado
+
+```bash
+curl -s -w "\nHTTP_CODE:%{http_code}" \
+  -H "Authorization: Token ${FOURGEEKS_TOKEN}" \
+  "https://breathecode.herokuapp.com/v1/admissions/user/me"
+```
+
+### Resultado
+
+```
+HTTP_CODE:200
+```
+
+### Datos del estudiante extraídos
+
+- **Nombre:** Daniel Ochoa
+- **Email:** dochoadi@gmail.com
+- **ID de usuario:** 21847
+- **Fecha de alta:** 2026-06-24T11:38:30
+- **Rol:** student (Academia: 4Geeks Madrid)
+- **Estado financiero:** UP_TO_DATE en todos los cohorts
+- **Cohorts activos (educational_status ACTIVE):**
+  - Implementing Data Pipelines
+  - Asynchronous processing and offloading
+  - Command Line, Git and Github
+  - Intro to 4Geeks Method
+  - Command Line, Git and Github (v3)
+  - Coding Fundamentals with Typescript
+  - Working with AI coding agents
+  - Frontend development with Coding Agents
+  - Coding fundamentals with Python
+  - Backend development with Coding Agents
+  - Authentication in web applications
+  - Error handling, debugging and testing
+  - Managing relational databases with FastAPI
+  - Container applications with Docker
+  - Architecture optimization
+  - Application telemetry
+  - Models training & RAG
+  - Agentic Engineering
+  - Agentic Workflows
+- **Cohorts completados (GRADUATED):**
+  - Working with AI coding agents (v3)
+  - Ai Engineering Fundamentals
+  - No-Code & Automation
+- **Cohort con estado NOT_COMPLETING:** Ai Engineering Introduction (PREWORK)
+
+### Conclusión
+
+✅ **Token válido y sesión activa.** La API respondió 200 con todos los datos
+del perfil. El token `FOURGEEKS_TOKEN` está operativo y permite consultar la
+API de Breathecode correctamente. La skill queda funcional.
+
+---
